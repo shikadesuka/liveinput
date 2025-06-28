@@ -6,6 +6,14 @@ import (
 
 	"github.com/gorilla/websocket"
 )
+import "os"
+
+port := os.Getenv("PORT")
+if port == "" {
+    port = "8080" // fallback
+}
+http.ListenAndServe(":" + port, nil)
+
 
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan string)
