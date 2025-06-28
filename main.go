@@ -3,28 +3,26 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/websocket"
 )
-import "os"
-
-port := os.Getenv("PORT")
-if port == "" {
-    port = "8080" // fallback
-}
-http.ListenAndServe(":" + port, nil)
-
 
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan string)
 var upgrader = websocket.Upgrader{}
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	http.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
-	fmt.Println("Server started on :8080")
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Server started on port " + port)
+	http.ListenAndServe(":" + port, nil)
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
